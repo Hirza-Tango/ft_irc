@@ -6,7 +6,7 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/27 10:32:33 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/08/27 10:50:29 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/08/27 11:32:20 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,10 @@
 # define BIRCD_H
 
 # include <sys/select.h>
+# include <sys/resource.h>
+# include <stdlib.h>
+# include <stdio.h>
+# include <string.h>
 
 # define FD_FREE	0
 # define FD_SERV	1
@@ -45,9 +49,6 @@ typedef struct	s_env
 	fd_set	fd_write;
 }				t_env;
 
-void			init_env(t_env *e);
-void			get_opt(t_env *e, int ac, char **av);
-void			main_loop(t_env *e);
 void			srv_create(t_env *e, int port);
 void			srv_accept(t_env *e, int s);
 void			client_read(t_env *e, int cs);
@@ -55,8 +56,5 @@ void			client_write(t_env *e, int cs);
 void			clean_fd(t_fd *fd);
 int				x_int(int err, int res, char *str);
 void			*x_void(void *err, void *res, char *str);
-void			init_fd(t_env *e);
-void			do_select(t_env *e);
-void			check_fd(t_env *e);
 
 #endif

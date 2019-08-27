@@ -5,8 +5,7 @@ INCLUDES=$(LIBFT_DIR)/includes
 REL_DEPS=$(DEPS:%=$(LIBFT_DIR)/%)
 CC=gcc
 CFLAGS=-Wall -Wextra -Werror -I . -I $(INCLUDES) -Ofast
-SERVER_FILES=	main.c init_env.c clean_fd.c get_opt.c x.c main_loop.c \
-	init_fd.c do_select.c check_fd.c \
+SERVER_FILES=	main.c clean_fd.c x.c \
 	srv_create.c srv_accept.c \
 	client_read.c client_write.c
 CLIENT_FILES= main.c
