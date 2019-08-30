@@ -6,14 +6,11 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/27 10:46:34 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/08/27 10:52:24 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/08/30 09:01:20 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include "bircd.h"
+#include "irc_server.h"
 
 void	srv_create(t_env *e, int port)
 {
@@ -21,7 +18,7 @@ void	srv_create(t_env *e, int port)
 	struct sockaddr_in	sin;
 	struct protoent		*pe;
 
-	pe = (struct protoent*)x_void(NULL, getprotobyname("tcp"), "getprotobyname");
+	pe = (struct protoent*)x_void(NULL, getprotobyname("tcp"), "getproto");
 	s = x_int(-1, socket(PF_INET, SOCK_STREAM, pe->p_proto), "socket");
 	sin.sin_family = AF_INET;
 	sin.sin_addr.s_addr = INADDR_ANY;

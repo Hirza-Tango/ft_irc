@@ -6,12 +6,11 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/27 10:38:38 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/08/27 10:38:54 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/08/30 08:23:43 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
-#include "bircd.h"
+#include "irc_server.h"
 
 void	clean_fd(t_fd *fd)
 {

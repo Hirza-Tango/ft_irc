@@ -6,14 +6,11 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/27 10:39:17 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/08/27 10:39:45 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/08/30 08:23:54 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include "bircd.h"
+#include "irc_server.h"
 
 void	client_read(t_env *e, int cs)
 {

@@ -6,11 +6,11 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/27 10:44:50 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/08/27 11:32:05 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/08/30 09:00:53 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "bircd.h"
+#include "irc_server.h"
 
 static void	init_fd(t_env *e)
 {
@@ -70,7 +70,8 @@ static void	init_env(t_env *e)
 
 int			main(int ac, char **av)
 {
-	t_env	e;
+	t_env			e;
+	struct timeval	timeout;
 
 	init_env(&e);
 	if (ac != 2)
@@ -83,7 +84,8 @@ int			main(int ac, char **av)
 	while (1)
 	{
 		init_fd(&e);
-		e.r = select(e.max + 1, &e.fd_read, &e.fd_write, NULL, NULL);
+		timeout.tv_sec = 10;
+		e.r = select(e.max + 1, &e.fd_read, &e.fd_write, NULL, &timeout);
 		check_fd(&e);
 	}
 	return (0);

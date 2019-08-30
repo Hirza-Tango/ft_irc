@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   bircd.h                                            :+:      :+:    :+:   */
+/*   irc_server.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/27 10:32:33 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/08/27 11:32:20 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/08/30 09:01:10 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,10 @@
 # include <stdlib.h>
 # include <stdio.h>
 # include <string.h>
+# include <netinet/in.h>
+# include <arpa/inet.h>
+# include <netdb.h>
+# include <errno.h>
 
 # define FD_FREE	0
 # define FD_SERV	1
@@ -31,11 +35,11 @@
 
 typedef struct	s_fd
 {
-	int		type;
 	void	(*fct_read)();
 	void	(*fct_write)();
 	char	buf_read[BUF_SIZE + 1];
 	char	buf_write[BUF_SIZE + 1];
+	int		type;
 }				t_fd;
 
 typedef struct	s_env

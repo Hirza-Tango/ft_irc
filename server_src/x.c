@@ -6,15 +6,11 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/27 10:46:55 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/08/27 10:49:43 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/08/30 08:59:06 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "bircd.h"
+#include "irc_server.h"
 
 int		x_int(int err, int res, char *str)
 {
