@@ -6,18 +6,21 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/27 10:32:33 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/08/30 09:01:10 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/08/30 10:05:11 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef BIRCD_H
-# define BIRCD_H
+#ifndef IRC_SERVER_H
+# define IRC_SERVER_H
+
+# include "ring_buffer.h"
 
 # include <sys/select.h>
 # include <sys/resource.h>
 # include <stdlib.h>
 # include <stdio.h>
 # include <string.h>
+# include <unistd.h>
 # include <netinet/in.h>
 # include <arpa/inet.h>
 # include <netdb.h>
@@ -39,6 +42,7 @@ typedef struct	s_fd
 	void	(*fct_write)();
 	char	buf_read[BUF_SIZE + 1];
 	char	buf_write[BUF_SIZE + 1];
+	char	nick[10];
 	int		type;
 }				t_fd;
 
