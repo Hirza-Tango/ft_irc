@@ -6,65 +6,97 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/30 06:32:11 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/08/30 09:58:09 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/08/30 12:54:45 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ring_buffer.h"
 
-t_cbuff	cbuff_create(size_t string_size, size_t nstrings)
+t_cbuff	cbuff_create(size_t buffer_size)
 {
-	size_t	i;
 	t_cbuff	cbuff;
 
 	cbuff = malloc(sizeof(struct s_cbuff));
-	cbuff->buffer = malloc(sizeof(char *) * nstrings);
-	i = 0;
-	while (i < nstrings)
-		cbuff->buffer[i++] = malloc(string_size);
+	cbuff->buffer = malloc(buffer_size);
 	cbuff->head = 0;
 	cbuff->tail = 0;
-	cbuff->capacity = nstrings;
+	cbuff->capacity = buffer_size;
 	cbuff->is_full = 0;
 	return (cbuff);
 }
 
 void	cbuff_destroy(t_cbuff cbuff)
 {
-	size_t	i;
-
-	i = 0;
-	while (i < cbuff->capacity)
-		free(cbuff->buffer[i++]);
 	free(cbuff->buffer);
 	free(cbuff);
 }
 
 int		cbuff_write(t_cbuff cbuff, char *data)
 {
-	if (cbuff->is_full)
+	const size_t len = strlen(data);
+
+	if (len > cbuff->capacity - cbuff_size(cbuff))
 		return (-1);
-	strcpy(cbuff->buffer[cbuff->head], data);
-	cbuff->head = (cbuff->head + 1) % cbuff->capacity;
-	cbuff->is_full = cbuff->head == cbuff->tail;
+	if (cbuff->head + len > cbuff->capacity)
+	{
+		strncpy(cbuff->buffer + cbuff->head, data,
+			cbuff->capacity - cbuff->head);
+		strcpy(cbuff->buffer, data + cbuff->capacity - cbuff->head);
+	}
+	else
+		strcpy(cbuff->buffer + cbuff->head, data);
+	cbuff->head = (cbuff->head + len) % cbuff->capacity;
+	cbuff->is_full = (cbuff->head == cbuff->tail);
 	return (0);
 }
 
 void	cbuff_overwrite(t_cbuff cbuff, char *data)
 {
-	if (cbuff->is_full)
-		cbuff->tail = (cbuff->tail + 1) % cbuff->capacity;
-	strcpy(cbuff->buffer[cbuff->head], data);
-	cbuff->head = (cbuff->head + 1) % cbuff->capacity;
-	cbuff->is_full = cbuff->head == cbuff->tail;
+	const size_t len = strlen(data);
+
+	if (len > cbuff->capacity)
+		return ;
+	if (len > cbuff->capacity - cbuff_size(cbuff))
+	{
+		cbuff->tail = (cbuff->tail + len - cbuff->capacity + cbuff_size(cbuff))
+			% cbuff->capacity;
+	}
+	if (cbuff->head + len > cbuff->capacity)
+	{
+		strncpy(cbuff->buffer + cbuff->head, data,
+			cbuff->capacity - cbuff->head);
+		strcpy(cbuff->buffer, data + cbuff->capacity - cbuff->head);
+	}
+	else
+		strcpy(cbuff->buffer + cbuff->head, data);
+	cbuff->head = (cbuff->head + len) % cbuff->capacity;
+	cbuff->is_full = (cbuff->head == cbuff->tail);
+	return (0);
 }
 
-int		cbuff_read(t_cbuff cbuff, char **string_buff)
+int		cbuff_read(t_cbuff cbuff, char *string_buff)
 {
-	if (cbuff->head == cbuff->tail && !cbuff->is_full)
-		return (-1);
-	strcpy(*string_buff, cbuff->buffer[cbuff->tail]);
-	cbuff->tail = (cbuff->tail + 1) % cbuff->capacity;
-	cbuff->is_full = 0;
-	return (0);
+	char	*newl;
+
+	newl = memchr(cbuff->buffer + cbuff->tail, '\n',
+		cbuff->capacity - cbuff->tail);
+	if (!newl)
+		newl = memchr(cbuff->buffer, '\n', cbuff->tail);
+	else
+	{
+		strncpy(string_buff, cbuff->buffer + cbuff->tail, newl - cbuff->tail);
+		cbuff->tail = (newl + 1 - cbuff->buffer) % cbuff->capacity;
+		return (1);
+	}
+	if (!newl)
+		return (0);
+	else
+	{
+		strncpy(string_buff, cbuff->buffer + cbuff->tail,
+			cbuff->capacity - cbuff->tail);
+		strncpy(string_buff + cbuff->capacity - cbuff->tail, cbuff->buffer,
+			newl);
+		cbuff->tail = (newl + 1 - cbuff->buffer) % cbuff->capacity;
+		return (1);
+	}
 }
