@@ -6,7 +6,7 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/27 10:39:17 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/08/30 08:23:54 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/08/30 10:35:23 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ void	client_read(t_env *e, int cs)
 		i = 0;
 		while (i < e->maxfd)
 		{
+			//When a "CRLF" is found:
+				//Add command to a ring buffer
 			if ((e->fds[i].type == FD_CLIENT) &&
 					(i != cs))
 				send(i, e->fds[cs].buf_read, r, 0);

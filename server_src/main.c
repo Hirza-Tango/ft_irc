@@ -6,7 +6,7 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/27 10:44:50 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/08/30 09:00:53 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/08/30 10:49:18 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ int			main(int ac, char **av)
 	{
 		init_fd(&e);
 		timeout.tv_sec = 10;
-		e.r = select(e.max + 1, &e.fd_read, &e.fd_write, NULL, &timeout);
+		e.r = select(e.max + 1, &e.fd_read, &e.fd_write, NULL, NULL);
 		check_fd(&e);
 	}
 	return (0);
