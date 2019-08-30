@@ -6,7 +6,7 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/27 10:32:33 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/08/30 10:05:11 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/08/30 13:50:55 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@
 # define FD_SERV	1
 # define FD_CLIENT	2
 
-# define BUF_SIZE	4096
+# define BUF_SIZE	10
 
 # define MAX(a,b)	((a > b) ? a : b)
 
@@ -40,8 +40,8 @@ typedef struct	s_fd
 {
 	void	(*fct_read)();
 	void	(*fct_write)();
-	char	buf_read[BUF_SIZE + 1];
-	char	buf_write[BUF_SIZE + 1];
+	t_cbuff	buf_read;
+	t_cbuff	buf_write;
 	char	nick[10];
 	int		type;
 }				t_fd;

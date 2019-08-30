@@ -6,7 +6,7 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/27 10:44:50 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/08/30 10:49:18 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/08/30 13:48:07 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static void	init_fd(t_env *e)
 		if (e->fds[i].type != FD_FREE)
 		{
 			FD_SET(i, &e->fd_read);
-			if (strlen(e->fds[i].buf_write) > 0)
+			if (e->fds[i].type == FD_CLIENT && cbuff_size(e->fds[i].buf_write) > 0)
 			{
 				FD_SET(i, &e->fd_write);
 			}

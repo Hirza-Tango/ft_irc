@@ -6,7 +6,7 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/30 06:32:11 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/08/30 12:54:45 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/08/30 13:36:16 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,6 @@ void	cbuff_overwrite(t_cbuff cbuff, char *data)
 		strcpy(cbuff->buffer + cbuff->head, data);
 	cbuff->head = (cbuff->head + len) % cbuff->capacity;
 	cbuff->is_full = (cbuff->head == cbuff->tail);
-	return (0);
 }
 
 int		cbuff_read(t_cbuff cbuff, char *string_buff)
@@ -84,7 +83,7 @@ int		cbuff_read(t_cbuff cbuff, char *string_buff)
 		newl = memchr(cbuff->buffer, '\n', cbuff->tail);
 	else
 	{
-		strncpy(string_buff, cbuff->buffer + cbuff->tail, newl - cbuff->tail);
+		strncpy(string_buff, cbuff->buffer + cbuff->tail, newl - cbuff->tail - cbuff->buffer);
 		cbuff->tail = (newl + 1 - cbuff->buffer) % cbuff->capacity;
 		return (1);
 	}
@@ -95,7 +94,7 @@ int		cbuff_read(t_cbuff cbuff, char *string_buff)
 		strncpy(string_buff, cbuff->buffer + cbuff->tail,
 			cbuff->capacity - cbuff->tail);
 		strncpy(string_buff + cbuff->capacity - cbuff->tail, cbuff->buffer,
-			newl);
+			newl - cbuff->buffer);
 		cbuff->tail = (newl + 1 - cbuff->buffer) % cbuff->capacity;
 		return (1);
 	}

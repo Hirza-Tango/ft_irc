@@ -6,7 +6,7 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/27 10:45:12 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/08/30 08:58:15 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/08/30 13:33:36 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,4 +26,6 @@ void	srv_accept(t_env *e, int s)
 	e->fds[cs].type = FD_CLIENT;
 	e->fds[cs].fct_read = client_read;
 	e->fds[cs].fct_write = client_write;
+	e->fds[cs].buf_read = cbuff_create(BUF_SIZE);
+	e->fds[cs].buf_write = cbuff_create(BUF_SIZE);
 }
