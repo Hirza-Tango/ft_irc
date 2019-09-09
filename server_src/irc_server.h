@@ -6,7 +6,7 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/27 10:32:33 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/09/09 16:40:04 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/09/09 17:08:15 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,13 +35,22 @@
 typedef enum	e_reply_codes{
 	RPL_NONE = 300,
 	ERR_NOSUCHNICK = 401,
+	ERR_NOSUCHCHANNEL = 403,
+	ERR_NORECIPIENT = 411,
+	ERR_NOTEXTTOSEND = 412,
 	ERR_UNKNOWNCOMMAND = 421,
-	ERR_NOTREGISTERED = 451
+	ERR_NONICKNAMEGIVEN = 431,
+	ERR_ERRONEUSNICKNAME = 432,
+	ERR_NICKNAMEINUSE = 433,
+	ERR_NOTREGISTERED = 451,
 }				t_reply_codes;
 
 # define BUF_SIZE	4096
 
 # define USAGE	"Usage: %s port\n"
+
+# define I_READ		e->fds[i].buf_read
+# define I_WRITE	e->fds[i].buf_write
 
 typedef struct	s_fd
 {
