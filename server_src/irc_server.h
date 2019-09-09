@@ -6,7 +6,7 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/27 10:32:33 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/08/30 13:50:55 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/09/02 10:13:27 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 # define IRC_SERVER_H
 
 # include "ring_buffer.h"
+# include "../libft/includes/libft.h"
+# include "../libft/includes/ft_printf.h"
 
 # include <sys/select.h>
 # include <sys/resource.h>
@@ -30,9 +32,7 @@
 # define FD_SERV	1
 # define FD_CLIENT	2
 
-# define BUF_SIZE	10
-
-# define MAX(a,b)	((a > b) ? a : b)
+# define BUF_SIZE	4096
 
 # define USAGE	"Usage: %s port\n"
 

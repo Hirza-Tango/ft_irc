@@ -6,7 +6,7 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/30 06:20:50 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/08/30 12:49:21 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/09/02 10:10:35 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include <string.h>
 # include <stdlib.h>
+# include "../libft/includes/libft.h"
 
 struct	s_cbuff
 {
@@ -37,5 +38,6 @@ char	cbuff_isempty(t_cbuff cbuff);
 char	cbuff_isfull(t_cbuff cbuff);
 size_t	cbuff_cap(t_cbuff cbuff);
 size_t	cbuff_size(t_cbuff cbuff);
+size_t	cbuff_ready(t_cbuff cbuff);
 
 #endif

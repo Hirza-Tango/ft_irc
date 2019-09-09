@@ -1,10 +1,10 @@
 NAME=ft_irc
-DEPS=libft/libft.a
+DEPS=libft/libft.a ft_printf/libftprintf.a
 LIBFT_DIR=libft
 INCLUDES=$(LIBFT_DIR)/includes
 REL_DEPS=$(DEPS:%=$(LIBFT_DIR)/%)
 CC=gcc
-CFLAGS=-Wall -Wextra -Werror -I . -I $(INCLUDES) -Ofast -g
+CFLAGS=-Wall -Wextra -Werror -I . -I $(INCLUDES) -O0 -g
 SERVER_FILES=	main.c clean_fd.c x.c \
 	srv_create.c srv_accept.c \
 	client_read.c client_write.c	ring_buffer.c	ring_buffer_util.c

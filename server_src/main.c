@@ -6,7 +6,7 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/27 10:44:50 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/08/30 13:48:07 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/09/09 12:46:19 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,14 @@ static void	check_fd(t_env *e)
 	i = 0;
 	while ((i < e->maxfd) && (e->r > 0))
 	{
-		if (FD_ISSET(i, &e->fd_read))
+		if (e->fds[i].type == FD_FREE)
+		{
+			i++;
+			continue ;
+		}
+		if (FD_ISSET(i, &e->fd_read) && e->fds[i].fct_read)
 			e->fds[i].fct_read(e, i);
-		if (FD_ISSET(i, &e->fd_write))
+		if (FD_ISSET(i, &e->fd_write) && e->fds[i].fct_write)
 			e->fds[i].fct_write(e, i);
 		if (FD_ISSET(i, &e->fd_read) || FD_ISSET(i, &e->fd_write))
 			e->r--;
@@ -68,6 +73,37 @@ static void	init_env(t_env *e)
 	}
 }
 
+static void	process_cmds(t_env *e)
+{
+	char	buff[BUF_SIZE];
+	int		w;
+	int		i;
+	int		j;
+
+	i = 0;
+	while(i < e->maxfd)
+	{
+		if (e->fds[i].type == FD_CLIENT)
+		{
+			w = cbuff_read(e->fds[i].buf_read, buff);
+			if (w > 0)
+			{
+				ft_printf("Read: %s from %d\n", buff, i);
+				j = 0;
+				while(j < e->maxfd)
+				{
+					if (e->fds[j].type == FD_CLIENT && j != i)
+					{
+						cbuff_write(e->fds[j].buf_write, buff);
+					}
+					j++;
+				}
+			}
+		}
+		i++;
+	}
+}
+
 int			main(int ac, char **av)
 {
 	t_env			e;
@@ -76,10 +112,10 @@ int			main(int ac, char **av)
 	init_env(&e);
 	if (ac != 2)
 	{
-		fprintf(stderr, USAGE, av[0]);
+		ft_printf_fd(2, USAGE, av[0]);
 		exit(1);
 	}
-	e.port = atoi(av[1]);
+	e.port = ft_atoi(av[1]);
 	srv_create(&e, e.port);
 	while (1)
 	{
@@ -87,6 +123,7 @@ int			main(int ac, char **av)
 		timeout.tv_sec = 10;
 		e.r = select(e.max + 1, &e.fd_read, &e.fd_write, NULL, NULL);
 		check_fd(&e);
+		process_cmds(&e);
 	}
 	return (0);
 }
