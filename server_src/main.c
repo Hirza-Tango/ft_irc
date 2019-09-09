@@ -6,7 +6,7 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/27 10:44:50 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/09/09 12:46:19 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/09/09 15:04:57 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static void	init_fd(t_env *e)
 {
-	int	i;
+	size_t	i;
 
 	i = 0;
 	e->max = 0;
@@ -25,7 +25,8 @@ static void	init_fd(t_env *e)
 		if (e->fds[i].type != FD_FREE)
 		{
 			FD_SET(i, &e->fd_read);
-			if (e->fds[i].type == FD_CLIENT && cbuff_size(e->fds[i].buf_write) > 0)
+			if (e->fds[i].type == FD_CLIENT &&
+				cbuff_size(e->fds[i].buf_write) > 0)
 			{
 				FD_SET(i, &e->fd_write);
 			}
@@ -37,7 +38,7 @@ static void	init_fd(t_env *e)
 
 static void	check_fd(t_env *e)
 {
-	int	i;
+	size_t	i;
 
 	i = 0;
 	while ((i < e->maxfd) && (e->r > 0))
@@ -59,7 +60,7 @@ static void	check_fd(t_env *e)
 
 static void	init_env(t_env *e)
 {
-	int				i;
+	size_t			i;
 	struct rlimit	rlp;
 
 	x_int(-1, getrlimit(RLIMIT_NOFILE, &rlp), "getrlimit");
@@ -69,37 +70,6 @@ static void	init_env(t_env *e)
 	while (i < e->maxfd)
 	{
 		clean_fd(&e->fds[i]);
-		i++;
-	}
-}
-
-static void	process_cmds(t_env *e)
-{
-	char	buff[BUF_SIZE];
-	int		w;
-	int		i;
-	int		j;
-
-	i = 0;
-	while(i < e->maxfd)
-	{
-		if (e->fds[i].type == FD_CLIENT)
-		{
-			w = cbuff_read(e->fds[i].buf_read, buff);
-			if (w > 0)
-			{
-				ft_printf("Read: %s from %d\n", buff, i);
-				j = 0;
-				while(j < e->maxfd)
-				{
-					if (e->fds[j].type == FD_CLIENT && j != i)
-					{
-						cbuff_write(e->fds[j].buf_write, buff);
-					}
-					j++;
-				}
-			}
-		}
 		i++;
 	}
 }
@@ -123,7 +93,7 @@ int			main(int ac, char **av)
 		timeout.tv_sec = 10;
 		e.r = select(e.max + 1, &e.fd_read, &e.fd_write, NULL, NULL);
 		check_fd(&e);
-		process_cmds(&e);
+		message_handler(&e);
 	}
 	return (0);
 }

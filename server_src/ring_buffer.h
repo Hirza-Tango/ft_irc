@@ -6,7 +6,7 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/30 06:20:50 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/09/02 10:10:35 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/09/09 14:00:29 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ t_cbuff	cbuff_create(size_t buffer_size);
 void	cbuff_destroy(t_cbuff cbuff);
 void	cbuff_reset(t_cbuff cbuff);
 int		cbuff_write(t_cbuff cbuff, char *data);
-void	cbuff_overwrite(t_cbuff cbuff, char *data);
 int		cbuff_read(t_cbuff cbuff, char *string_buff);
 char	cbuff_isempty(t_cbuff cbuff);
 char	cbuff_isfull(t_cbuff cbuff);
