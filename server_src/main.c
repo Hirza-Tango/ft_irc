@@ -6,7 +6,7 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/27 10:44:50 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/09/09 15:04:57 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/09/10 11:26:45 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ static void	init_env(t_env *e)
 		clean_fd(&e->fds[i]);
 		i++;
 	}
+	e->channels = NULL;
 }
 
 int			main(int ac, char **av)
@@ -93,7 +94,7 @@ int			main(int ac, char **av)
 		timeout.tv_sec = 10;
 		e.r = select(e.max + 1, &e.fd_read, &e.fd_write, NULL, NULL);
 		check_fd(&e);
-		message_handler(&e);
+		handle_cmd(&e);
 	}
 	return (0);
 }
