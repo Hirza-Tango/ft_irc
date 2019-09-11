@@ -6,7 +6,7 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/27 10:32:33 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/09/11 15:53:36 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/09/11 16:23:59 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,8 @@ typedef struct	s_fd
 
 typedef struct	s_chan
 {
-	char	name[201];
 	t_list	*users;
+	char	name[201];
 }				t_chan;
 
 typedef struct	s_env
