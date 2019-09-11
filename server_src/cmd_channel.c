@@ -6,7 +6,7 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/10 11:28:04 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/09/10 13:45:22 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/09/11 16:12:24 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,26 +15,49 @@
 static void	add_to_chan(t_env *e, size_t i, t_chan *chan)
 {
 	ft_lstadd(&chan->users, ft_lstnew(ft_strdup(e->fds[i].nick), 10));
-	reply(I_WRITE, RPL_NOTOPIC, "Topics are not currently supported");
+	reply(I_WRITE, RPL_NOTOPIC, chan->name, "No topic is set");
 	cmd_names(e, i, chan->name);
+}
+
+static void	del_from_chan(t_env *e, size_t i, t_chan *chan)
+{
+	t_list *current;
+	t_list *prev;
+
+	current = chan->users;
+	prev = NULL;
+	while (current)
+	{
+		if (!ft_strcmp(current->content, e->fds[i].nick))
+		{
+			if (!prev)
+				chan->users = current->next;
+			else
+				prev->next = current->next;
+			free(current->content);
+			free(current);
+			REPL_ERR(RPL_NONE, NULL, NULL);
+		}
+		prev = current;
+		current = current->next;
+	}
+	if (!current)
+		REPL_ERR(ERR_NOTONCHANNEL, chan->name, "You're not on that channel");
 }
 
 void		cmd_join(t_env *e, size_t i, char *cmd)
 {
 	t_list	*current;
-	char	name[201];
-	size_t	j;
+	char	*name;
 
-	while (ft_isspace(*cmd) && *cmd)
-		cmd++;
-	if (!*cmd)
-		return (reply(I_WRITE, ERR_NEEDMOREPARAMS, "No channel name given"));
-	if (!is_valid_chan(cmd))
-		return (reply(I_WRITE, ERR_NOSUCHCHANNEL, "Bad channel name"));
-	j = 0;
-	while (*cmd && !ft_isspace(*cmd) && i < 200)
-		name[j++] = *(cmd++);
-	name[j] = 0;
+	if (!e->fds[i].nick[0])
+		REPL_ERR(ERR_NOTREGISTERED, NULL,
+			"You have not registered");
+	name = get_arg(&cmd);
+	if (!*name)
+		REPL_ERR(ERR_NEEDMOREPARAMS, "JOIN", "Not enough parameters");
+	if (!is_valid_chan(name))
+		REPL_ERR(ERR_NOSUCHCHANNEL, name, "No such channel");
 	current = e->channels;
 	while (current)
 	{
@@ -49,16 +72,79 @@ void		cmd_join(t_env *e, size_t i, char *cmd)
 	return (add_to_chan(e, i, ((t_chan *)(current->content))));
 }
 
-void		cmd_leave(t_env *e, size_t i, char *cmd)
+void		cmd_part(t_env *e, size_t i, char *cmd)
 {
-	while (ft_isspace(*cmd) && *cmd)
-		cmd++;
-	(void)(e && i && cmd);
+	t_list	*current;
+	char	*name;
+
+	if (!e->fds[i].nick[0])
+		REPL_ERR(ERR_NOTREGISTERED, NULL,
+			"You have not registered");
+	name = get_arg(&cmd);
+	if (!*name)
+		REPL_ERR(ERR_NEEDMOREPARAMS, "PART", "Not enough parameters");
+	if (!is_valid_chan(name))
+		REPL_ERR(ERR_NOSUCHCHANNEL, name, "No such channel");
+	current = e->channels;
+	while (current)
+	{
+		if (!ft_strcmp(((t_chan *)(current->content))->name, name))
+			break ;
+		current = current->next;
+	}
+	if (!current)
+		REPL_ERR(ERR_NOSUCHCHANNEL, name, "No such channel");
+	del_from_chan(e, i, current->content);
+}
+
+static void	print_members_chan(t_env *e, size_t i, t_chan *chan)
+{
+	t_list	*current;
+
+	if (!chan->users)
+		return ;
+	cbuff_write(I_WRITE, RPL_NAMREPLY);
+	cbuff_write(I_WRITE, " ");
+	cbuff_write(I_WRITE, chan->name);
+	cbuff_write(I_WRITE, " :");
+	current = chan->users;
+	while (current)
+	{
+		cbuff_write(I_WRITE, current->content);
+		if ((current = current->next))
+			cbuff_write(I_WRITE, " ");
+		else
+		{
+			cbuff_write(I_WRITE, "\n");
+		}
+	}
 }
 
 void		cmd_names(t_env *e, size_t i, char *cmd)
 {
-	while (ft_isspace(*cmd) && *cmd)
-		cmd++;
-	(void)(e && i && cmd);
+	t_list	*current;
+	char	*name;
+
+	current = e->channels;
+	if (!*(name = get_arg(&cmd)))
+	{
+		while (current)
+		{
+			print_members_chan(e, i, current->content);
+			current = current->next;
+		}
+		REPL_ERR(RPL_ENDOFNAMES, NULL, "End of /NAMES list");
+	}
+	if (!is_valid_chan(name))
+		REPL_ERR(RPL_ENDOFNAMES, name, "End of /NAMES list");
+	while (current)
+	{
+		if (!ft_strcmp(((t_chan *)(current->content))->name, name))
+			break ;
+		current = current->next;
+	}
+	if (!current)
+		REPL_ERR(RPL_ENDOFNAMES, name, "End of /NAMES list");
+	print_members_chan(e, i, current->content);
+	REPL_ERR(RPL_ENDOFNAMES, name, "End of /NAMES list");
 }

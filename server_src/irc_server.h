@@ -6,7 +6,7 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/27 10:32:33 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/09/10 13:35:02 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/09/11 15:53:36 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,22 +32,22 @@
 # define FD_SERV	1
 # define FD_CLIENT	2
 
-typedef enum	e_reply_codes{
-	RPL_NONE = 300,
-	RPL_TOPIC = 332,
-	RPL_NOTOPIC = 331,
-	RPL_NAMREPLY = 353,
-	ERR_NOSUCHNICK = 401,
-	ERR_NOSUCHCHANNEL = 403,
-	ERR_NORECIPIENT = 411,
-	ERR_NOTEXTTOSEND = 412,
-	ERR_UNKNOWNCOMMAND = 421,
-	ERR_NONICKNAMEGIVEN = 431,
-	ERR_ERRONEUSNICKNAME = 432,
-	ERR_NICKNAMEINUSE = 433,
-	ERR_NOTREGISTERED = 451,
-	ERR_NEEDMOREPARAMS = 461
-}				t_reply_codes;
+# define RPL_NONE				"300"
+# define RPL_TOPIC				"332"
+# define RPL_NOTOPIC			"331"
+# define RPL_NAMREPLY			"353"
+# define RPL_ENDOFNAMES			"366"
+# define ERR_NOSUCHNICK			"401"
+# define ERR_NOSUCHCHANNEL		"403"
+# define ERR_NORECIPIENT		"411"
+# define ERR_NOTEXTTOSEND		"412"
+# define ERR_UNKNOWNCOMMAND		"421"
+# define ERR_NONICKNAMEGIVEN	"431"
+# define ERR_ERRONEUSNICKNAME	"432"
+# define ERR_NICKNAMEINUSE		"433"
+# define ERR_NOTONCHANNEL		"442"
+# define ERR_NOTREGISTERED		"451"
+# define ERR_NEEDMOREPARAMS		"461"
 
 # define BUF_SIZE	4096
 
@@ -55,6 +55,7 @@ typedef enum	e_reply_codes{
 
 # define I_READ		e->fds[i].buf_read
 # define I_WRITE	e->fds[i].buf_write
+# define REPL_ERR(x, y, z) { reply(I_WRITE, x, y, z); return ; }
 
 typedef struct	s_fd
 {
@@ -93,13 +94,15 @@ int				x_int(int err, int res, char *str);
 void			*x_void(void *err, void *res, char *str);
 
 void			handle_cmd(t_env *e);
-void			reply(t_cbuff write_buffer, int code, char *value);
+void			reply(t_cbuff write_buffer, char *code, char *target,
+	char *value);
+char			*get_arg(char **cmd);
 int				is_valid_nick(char *nick);
 int				is_valid_chan(char *chan);
 
 void			cmd_privmsg(t_env *e, size_t i, char *cmd);
 void			cmd_join(t_env *e, size_t i, char *cmd);
-void			cmd_leave(t_env *e, size_t i, char *cmd);
+void			cmd_part(t_env *e, size_t i, char *cmd);
 void			cmd_names(t_env *e, size_t i, char *cmd);
 
 #endif

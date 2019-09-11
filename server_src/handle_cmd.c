@@ -6,21 +6,26 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/09 15:00:29 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/09/10 13:44:21 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/09/11 15:51:17 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "irc_server.h"
 
-void	reply(t_cbuff write_buffer, int code, char *value)
+void	reply(t_cbuff write_buffer, char *code, char *target, char *value)
 {
-	const char	*code_str = ft_itoa(code);
-
-	cbuff_write(write_buffer, (char *)code_str);
-	cbuff_write(write_buffer, " ");
-	cbuff_write(write_buffer, value);
+	cbuff_write(write_buffer, code);
+	if (target && *target)
+	{
+		cbuff_write(write_buffer, " ");
+		cbuff_write(write_buffer, target);
+	}
+	if (value && *value)
+	{
+		cbuff_write(write_buffer, " :");
+		cbuff_write(write_buffer, value);
+	}
 	cbuff_write(write_buffer, "\n");
-	free((char *)code_str);
 }
 
 int		is_valid_nick(char *nick)
@@ -38,6 +43,8 @@ int		is_valid_nick(char *nick)
 			return (0);
 		i++;
 	}
+	if (i == 9 && nick[i])
+		return (0);
 	return (1);
 }
 
@@ -54,57 +61,88 @@ int		is_valid_chan(char *chan)
 			return (0);
 		i++;
 	}
+	if (i == 200)
+		return (0);
 	return (1);
 }
 
 void	cmd_nick(t_env *e, size_t i, char *cmd)
 {
+	char	*nick;
 	size_t	j;
-	char	nick[10];
 
-	j = 0;
-	while (ft_isspace(*cmd) && *cmd)
-		cmd++;
-	if (!*cmd)
-		return (reply(I_WRITE, ERR_NONICKNAMEGIVEN, "No nick given"));
-	if (!is_valid_nick(cmd))
-		return (reply(I_WRITE, ERR_ERRONEUSNICKNAME, "Bad nick"));
-	while (j < 9 && *cmd && !ft_isspace(*cmd))
-	{
-		nick[j] = *(cmd++);
-		j++;
-	}
-	nick[j] = 0;
+	nick = get_arg(&cmd);
+	if (!*nick)
+		REPL_ERR(ERR_NONICKNAMEGIVEN, "", "No nickname given");
+	if (!is_valid_nick(nick))
+		REPL_ERR(ERR_ERRONEUSNICKNAME, nick, "Erroneus nickname");
 	j = -1;
 	while (++j < e->maxfd)
 		if (e->fds[j].type == FD_CLIENT && !ft_strcmp(nick, e->fds[j].nick))
-			return (reply(I_WRITE, ERR_NICKNAMEINUSE, "Nick in use"));
+			REPL_ERR(ERR_NICKNAMEINUSE, nick, "Nickname is already in use");
 	ft_strcpy(e->fds[i].nick, nick);
-	reply(I_WRITE, RPL_NONE, NULL);
+	reply(I_WRITE, RPL_NONE, NULL, NULL);
+}
+
+char	*get_arg(char **cmd)
+{
+	static char arg[256];
+	size_t		i;
+
+	if (!cmd || !*cmd)
+		return ("");
+	while (ft_isspace(**cmd))
+		(*cmd)++;
+	i = 0;
+	while (i < 256 && **cmd && !ft_isspace(**cmd))
+		arg[i++] = *((*cmd)++);
+	arg[i] = 0;
+	while (ft_isspace(**cmd))
+		(*cmd)++;
+	return (arg);
+}
+
+void	add_name(t_env *e, size_t i, char **buff)
+{
+	char	new_buff[4096];
+
+	if ((*buff)[0] == ':')
+		return ;
+	new_buff[0] = ':';
+	ft_strcpy(new_buff + 1, e->fds[i].nick);
+	ft_strcat(new_buff + 1, " ");
+	ft_strlcat(new_buff, *buff, 4096);
+	ft_strcpy(*buff, new_buff);
 }
 
 void	handle_cmd(t_env *e)
 {
-	char	buff[BUF_SIZE];
+	char	buff[4096];
+	char	*tmp;
+	char	*cmd;
 	size_t	i;
 
 	i = -1;
 	while (++i < e->maxfd)
-		if (e->fds[i].type == FD_CLIENT &&
-			cbuff_read(I_READ, buff) > 0)
+		if (e->fds[i].type == FD_CLIENT && cbuff_read(I_READ, buff) > 0)
 		{
 			ft_printf("Read: %s from %d\n", buff, i);
-			if (!ft_strncmp(buff, "NICK", 4))
-				cmd_nick(e, i, buff + 4);
-			else if (!ft_strncmp(buff, "PRIVMSG", 7))
-				cmd_privmsg(e, i, buff + 7);
-			else if (!ft_strncmp(buff, "JOIN", 4))
-				cmd_join(e, i, buff + 4);
-			else if (!ft_strncmp(buff, "LEAVE", 5))
-				cmd_leave(e, i, buff + 5);
-			else if (!ft_strncmp(buff, "WHO", 3))
-				cmd_names(e, i, buff + 8);
+			tmp = buff;
+			add_name(e, i, &tmp);
+			cmd = get_arg(&tmp);
+			if (cmd && *cmd == ':')
+				cmd = get_arg(&tmp);
+			if (!ft_strcmp(cmd, "NICK"))
+				cmd_nick(e, i, tmp);
+			else if (!ft_strcmp(cmd, "PRIVMSG"))
+				cmd_privmsg(e, i, buff);
+			else if (!ft_strcmp(cmd, "JOIN"))
+				cmd_join(e, i, tmp);
+			else if (!ft_strcmp(cmd, "PART"))
+				cmd_part(e, i, tmp);
+			else if (!ft_strcmp(cmd, "NAMES"))
+				cmd_names(e, i, tmp);
 			else
-				return (reply(I_WRITE, ERR_UNKNOWNCOMMAND, "Unknown command"));
+				reply(I_WRITE, ERR_UNKNOWNCOMMAND, cmd, "Unknown command");
 		}
 }
