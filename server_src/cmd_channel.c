@@ -6,7 +6,7 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/10 11:28:04 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/09/11 16:12:24 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/09/11 16:15:25 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,9 +114,7 @@ static void	print_members_chan(t_env *e, size_t i, t_chan *chan)
 		if ((current = current->next))
 			cbuff_write(I_WRITE, " ");
 		else
-		{
 			cbuff_write(I_WRITE, "\n");
-		}
 	}
 }
 
