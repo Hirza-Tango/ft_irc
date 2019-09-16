@@ -6,7 +6,7 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/16 09:46:00 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/09/16 14:36:01 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/09/16 15:31:10 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ void	client_connect(t_env *e)
 	if (!tmp)
 		return ((void)ft_printf_fd(2, "Could not connect to host\n"));
 	FD_SET(e->socket_fd, &e->sock_set);
-	cmd_nick(e, getpwuid(getuid())->pw_name);
 }
 
 void	init_env(t_env *e, fd_set *set)

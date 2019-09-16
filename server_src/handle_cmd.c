@@ -6,29 +6,13 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/09 15:00:29 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/09/11 15:51:17 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/09/16 16:04:51 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "irc_server.h"
 
-void	reply(t_cbuff write_buffer, char *code, char *target, char *value)
-{
-	cbuff_write(write_buffer, code);
-	if (target && *target)
-	{
-		cbuff_write(write_buffer, " ");
-		cbuff_write(write_buffer, target);
-	}
-	if (value && *value)
-	{
-		cbuff_write(write_buffer, " :");
-		cbuff_write(write_buffer, value);
-	}
-	cbuff_write(write_buffer, "\n");
-}
-
-int		is_valid_nick(char *nick)
+int				is_valid_nick(char *nick)
 {
 	size_t	i;
 
@@ -48,7 +32,7 @@ int		is_valid_nick(char *nick)
 	return (1);
 }
 
-int		is_valid_chan(char *chan)
+int				is_valid_chan(char *chan)
 {
 	size_t	i;
 
@@ -66,7 +50,7 @@ int		is_valid_chan(char *chan)
 	return (1);
 }
 
-void	cmd_nick(t_env *e, size_t i, char *cmd)
+void			cmd_nick(t_env *e, size_t i, char *cmd)
 {
 	char	*nick;
 	size_t	j;
@@ -84,42 +68,30 @@ void	cmd_nick(t_env *e, size_t i, char *cmd)
 	reply(I_WRITE, RPL_NONE, NULL, NULL);
 }
 
-char	*get_arg(char **cmd)
-{
-	static char arg[256];
-	size_t		i;
-
-	if (!cmd || !*cmd)
-		return ("");
-	while (ft_isspace(**cmd))
-		(*cmd)++;
-	i = 0;
-	while (i < 256 && **cmd && !ft_isspace(**cmd))
-		arg[i++] = *((*cmd)++);
-	arg[i] = 0;
-	while (ft_isspace(**cmd))
-		(*cmd)++;
-	return (arg);
-}
-
-void	add_name(t_env *e, size_t i, char **buff)
+static size_t	add_name(t_env *e, size_t i, char **buff)
 {
 	char	new_buff[4096];
+	size_t	start;
 
-	if ((*buff)[0] == ':')
-		return ;
-	new_buff[0] = ':';
-	ft_strcpy(new_buff + 1, e->fds[i].nick);
-	ft_strcat(new_buff + 1, " ");
-	ft_strlcat(new_buff, *buff, 4096);
-	ft_strcpy(*buff, new_buff);
+	if ((*buff)[0] != ':')
+	{
+		new_buff[0] = ':';
+		ft_strcpy(new_buff + 1, e->fds[i].nick);
+		ft_strcat(new_buff + 1, " ");
+		ft_strlcat(new_buff, *buff, 4096);
+		ft_strcpy(*buff, new_buff);
+	}
+	start = ft_strlen(e->fds[i].nick) + 1;
+	while (ft_isspace((*buff)[start]))
+		start++;
+	return (start);
 }
 
-void	handle_cmd(t_env *e)
+void			handle_cmd(t_env *e)
 {
 	char	buff[4096];
+	size_t	cmd_start;
 	char	*tmp;
-	char	*cmd;
 	size_t	i;
 
 	i = -1;
@@ -128,21 +100,18 @@ void	handle_cmd(t_env *e)
 		{
 			ft_printf("Read: %s from %d\n", buff, i);
 			tmp = buff;
-			add_name(e, i, &tmp);
-			cmd = get_arg(&tmp);
-			if (cmd && *cmd == ':')
-				cmd = get_arg(&tmp);
-			if (!ft_strcmp(cmd, "NICK"))
-				cmd_nick(e, i, tmp);
-			else if (!ft_strcmp(cmd, "PRIVMSG"))
-				cmd_privmsg(e, i, buff);
-			else if (!ft_strcmp(cmd, "JOIN"))
-				cmd_join(e, i, tmp);
-			else if (!ft_strcmp(cmd, "PART"))
-				cmd_part(e, i, tmp);
-			else if (!ft_strcmp(cmd, "NAMES"))
-				cmd_names(e, i, tmp);
+			cmd_start = add_name(e, i, &tmp);
+			if (!ft_strncmp(*&buff + cmd_start, "NICK", 4))
+				cmd_nick(e, i, tmp + cmd_start + 4);
+			else if (!ft_strncmp(tmp + cmd_start, "PRIVMSG", 7))
+				cmd_privmsg(e, i, tmp);
+			else if (!ft_strncmp(tmp + cmd_start, "JOIN", 4))
+				cmd_join(e, i, tmp + cmd_start + 4);
+			else if (!ft_strncmp(tmp + cmd_start, "PART", 4))
+				cmd_part(e, i, tmp + cmd_start + 4);
+			else if (!ft_strncmp(tmp + cmd_start, "NAMES", 5))
+				cmd_names(e, i, tmp + cmd_start + 5);
 			else
-				reply(I_WRITE, ERR_UNKNOWNCOMMAND, cmd, "Unknown command");
+				reply(I_WRITE, ERR_UNKNOWNCOMMAND, "", "Unknown command");
 		}
 }

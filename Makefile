@@ -7,8 +7,8 @@ CC=gcc
 CFLAGS=-Wall -Wextra -Werror -I . -I $(INCLUDES) -O0 -g
 SERVER_FILES=	main.c	clean_fd.c	x.c	srv_create.c	srv_accept.c		\
 	client_read.c	client_write.c	ring_buffer.c	ring_buffer_util.c		\
-	handle_cmd.c	cmd_channel.c	cmd_message.c
-CLIENT_FILES= main.c	cmds.c		util.c
+	handle_cmd.c	cmd_channel.c	cmd_message.c	cmd_misc.c
+CLIENT_FILES= main.c	util.c
 SERVER_FILES := $(addprefix server_src/,$(SERVER_FILES))
 CLIENT_FILES := $(addprefix client_src/,$(CLIENT_FILES))
 

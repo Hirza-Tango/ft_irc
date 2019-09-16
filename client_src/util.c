@@ -6,7 +6,7 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/16 13:29:16 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/09/16 14:33:13 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/09/16 16:11:07 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ void	irc_read(t_env *e)
 	else if (e->buff[0] == ':')
 	{
 		buff = e->buff + 1;
+		buff[readlen - 1] = 0;
 		ft_strcpy(user, get_arg(&buff));
 		get_arg(&buff);
 		ft_strcpy(dest, get_arg(&buff));
