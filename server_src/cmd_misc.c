@@ -6,7 +6,7 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/16 16:01:12 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/09/16 16:32:33 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/09/16 16:54:28 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,13 @@ static void	print_members_chan(t_env *e, size_t i, t_chan *chan)
 {
 	t_list	*current;
 
+	current = chan->users;
+	while (current)
+	{
+		if (e->fds[*(size_t *)current->content].type != FD_CLIENT)
+			del_from_chan(e, *(size_t *)current->content, chan);
+		current = current->next;
+	}
 	if (!chan->users)
 		return ;
 	cbuff_write(I_WRITE, RPL_NAMREPLY);
@@ -24,20 +31,13 @@ static void	print_members_chan(t_env *e, size_t i, t_chan *chan)
 	cbuff_write(I_WRITE, " :");
 	current = chan->users;
 	while (current)
-		if (e->fds[*(size_t *)current->content].type == FD_CLIENT)
-		{
-			cbuff_write(I_WRITE, e->fds[*(size_t *)current->content].nick);
-			if ((current = current->next))
-				cbuff_write(I_WRITE, " ");
-			else
-				cbuff_write(I_WRITE, "\n");
-		}
+	{
+		cbuff_write(I_WRITE, e->fds[*(size_t *)current->content].nick);
+		if ((current = current->next))
+			cbuff_write(I_WRITE, " ");
 		else
-		{
-			del_from_chan(e, *(size_t *)current->content, chan);
-			if (!(current = current->next))
-				cbuff_write(I_WRITE, "\n");
-		}
+			cbuff_write(I_WRITE, "\n");
+	}
 }
 
 void		cmd_names(t_env *e, size_t i, char *cmd)
