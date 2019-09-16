@@ -6,7 +6,7 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/27 10:44:50 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/09/10 11:26:45 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/09/13 11:57:07 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,9 +48,9 @@ static void	check_fd(t_env *e)
 			i++;
 			continue ;
 		}
-		if (FD_ISSET(i, &e->fd_read) && e->fds[i].fct_read)
+		if (FD_ISSET(i, &e->fd_read))
 			e->fds[i].fct_read(e, i);
-		if (FD_ISSET(i, &e->fd_write) && e->fds[i].fct_write)
+		if (FD_ISSET(i, &e->fd_write))
 			e->fds[i].fct_write(e, i);
 		if (FD_ISSET(i, &e->fd_read) || FD_ISSET(i, &e->fd_write))
 			e->r--;
@@ -91,8 +91,8 @@ int			main(int ac, char **av)
 	while (1)
 	{
 		init_fd(&e);
-		timeout.tv_sec = 10;
-		e.r = select(e.max + 1, &e.fd_read, &e.fd_write, NULL, NULL);
+		timeout.tv_sec = 1;
+		e.r = select(e.max + 1, &e.fd_read, &e.fd_write, NULL, &timeout);
 		check_fd(&e);
 		handle_cmd(&e);
 	}

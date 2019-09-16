@@ -6,7 +6,7 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/10 11:28:04 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/09/11 16:15:25 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/09/16 14:38:20 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,7 @@ void		cmd_join(t_env *e, size_t i, char *cmd)
 	char	*name;
 
 	if (!e->fds[i].nick[0])
-		REPL_ERR(ERR_NOTREGISTERED, NULL,
-			"You have not registered");
+		REPL_ERR(ERR_NOTREGISTERED, NULL, "You have not registered");
 	name = get_arg(&cmd);
 	if (!*name)
 		REPL_ERR(ERR_NEEDMOREPARAMS, "JOIN", "Not enough parameters");
@@ -78,8 +77,7 @@ void		cmd_part(t_env *e, size_t i, char *cmd)
 	char	*name;
 
 	if (!e->fds[i].nick[0])
-		REPL_ERR(ERR_NOTREGISTERED, NULL,
-			"You have not registered");
+		REPL_ERR(ERR_NOTREGISTERED, NULL, "You have not registered");
 	name = get_arg(&cmd);
 	if (!*name)
 		REPL_ERR(ERR_NEEDMOREPARAMS, "PART", "Not enough parameters");
