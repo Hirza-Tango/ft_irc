@@ -6,7 +6,7 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/10 11:27:33 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/09/11 15:34:33 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/09/16 16:24:02 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ static void	msg_chan(t_env *e, size_t i, char *cmd, char *chan_name)
 	current = ((t_chan *)(current->content))->users;
 	while (current)
 	{
-		msg_nick(e, i, cmd, current->content);
+		cbuff_write(e->fds[*(size_t *)(current->content)].buf_write, cmd);
 		current = current->next;
 	}
 	REPL_ERR(RPL_NONE, NULL, NULL);

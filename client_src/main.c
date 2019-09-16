@@ -6,7 +6,7 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/16 09:46:00 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/09/16 15:31:10 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/09/16 16:34:00 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,8 @@ void	handle_cmd(t_env *e, char *cmd_buff)
 		irc_write(e, "PRIVMSG ");
 	else if (!ft_strcmp(arg, "/who"))
 		irc_write(e, "NAMES ");
+	else if (!ft_strcmp(arg, "/leave"))
+		irc_write(e, "PART ");
 	else
 		return (ft_putendl("Invalid command"));
 	if (cmd_buff && *cmd_buff)

@@ -6,7 +6,7 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/10 11:28:04 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/09/16 16:01:21 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/09/16 16:31:30 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,12 @@
 
 static void	add_to_chan(t_env *e, size_t i, t_chan *chan)
 {
-	ft_lstadd(&chan->users, ft_lstnew(ft_strdup(e->fds[i].nick), 10));
+	ft_lstadd(&chan->users, ft_lstnew(&i, sizeof(size_t)));
 	reply(I_WRITE, RPL_NOTOPIC, chan->name, "No topic is set");
 	cmd_names(e, i, chan->name);
 }
 
-static void	del_from_chan(t_env *e, size_t i, t_chan *chan)
+void		del_from_chan(t_env *e, size_t i, t_chan *chan)
 {
 	t_list *current;
 	t_list *prev;
@@ -28,7 +28,7 @@ static void	del_from_chan(t_env *e, size_t i, t_chan *chan)
 	prev = NULL;
 	while (current)
 	{
-		if (!ft_strcmp(current->content, e->fds[i].nick))
+		if (*(size_t *)current->content == i)
 		{
 			if (!prev)
 				chan->users = current->next;

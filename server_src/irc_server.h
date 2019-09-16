@@ -6,7 +6,7 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/27 10:32:33 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/09/11 16:23:59 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/09/16 16:31:44 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,7 @@ int				is_valid_chan(char *chan);
 void			cmd_privmsg(t_env *e, size_t i, char *cmd);
 void			cmd_join(t_env *e, size_t i, char *cmd);
 void			cmd_part(t_env *e, size_t i, char *cmd);
+void			del_from_chan(t_env *e, size_t i, t_chan *chan);
 void			cmd_names(t_env *e, size_t i, char *cmd);
 
 #endif
