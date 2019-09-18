@@ -6,7 +6,7 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/16 09:47:40 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/09/16 14:15:18 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/09/18 12:26:50 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,12 +45,7 @@ void			client_connect(t_env *e);
 void			irc_write(t_env *e, char *cmd);
 void			irc_read(t_env *e);
 char			*get_arg(char **cmd);
-
-void			cmd_who(t_env *e, char *cmd);
-void			cmd_nick(t_env *e, char *cmd);
-void			cmd_join(t_env *e, char *cmd);
+void			init_connect(t_env *e, char **argv);
 void			cmd_connect(t_env *e, char *cmd);
-void			cmd_leave(t_env *e, char *cmd);
-void			cmd_msg(t_env *e, char *cmd);
 
 #endif

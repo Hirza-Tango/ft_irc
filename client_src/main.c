@@ -6,7 +6,7 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/16 09:46:00 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/09/18 11:55:01 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/09/18 12:28:29 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,8 +72,7 @@ void	handle_cmd(t_env *e, char *cmd_buff)
 		irc_write(e, "PART ");
 	else
 		return (ft_putendl("Invalid command"));
-	if (cmd_buff && *cmd_buff)
-		irc_write(e, cmd_buff);
+	irc_write(e, cmd_buff);
 	irc_write(e, "\n");
 }
 
@@ -86,11 +85,7 @@ int		main(int argc, char *argv[])
 
 	init_env(&e, &set);
 	if (argc == 3)
-	{
-		e.host = ft_strdup(argv[1]);
-		e.port = ft_strdup(argv[2]);
-		client_connect(&e);
-	}
+		init_connect(&e, argv);
 	while (1)
 	{
 		timeout.tv_sec = 1;

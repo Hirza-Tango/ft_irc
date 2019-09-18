@@ -6,7 +6,7 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/16 13:29:16 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/09/16 16:11:07 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/09/18 12:20:52 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,5 +80,12 @@ void	cmd_connect(t_env *e, char *cmd)
 		free(e->port);
 	e->host = ft_strdup(get_arg(&cmd));
 	e->port = ft_strdup(get_arg(&cmd));
+	client_connect(e);
+}
+
+void	init_connect(t_env *e, char **argv)
+{
+	e->host = ft_strdup(argv[1]);
+	e->port = ft_strdup(argv[2]);
 	client_connect(e);
 }
