@@ -6,7 +6,7 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/10 11:28:04 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/09/16 16:31:30 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/09/18 12:43:37 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ void		cmd_join(t_env *e, size_t i, char *cmd)
 {
 	t_list	*current;
 	char	*name;
+	t_chan	chan;
 
 	if (!e->fds[i].nick[0])
 		REPL_ERR(ERR_NOTREGISTERED, NULL, "You have not registered");
@@ -64,9 +65,9 @@ void		cmd_join(t_env *e, size_t i, char *cmd)
 			return (add_to_chan(e, i, current->content));
 		current = current->next;
 	}
-	current = ft_lstnew(malloc(sizeof(t_chan)), sizeof(t_chan));
-	ft_strcpy(((t_chan *)(current->content))->name, name);
-	((t_chan *)(current->content))->users = NULL;
+	ft_strcpy(chan.name, name);
+	chan.users = NULL;
+	current = ft_lstnew(&chan, sizeof(t_chan));
 	ft_lstadd(&e->channels, current);
 	return (add_to_chan(e, i, ((t_chan *)(current->content))));
 }
