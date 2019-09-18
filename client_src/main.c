@@ -6,7 +6,7 @@
 /*   By: dslogrov <dslogrove@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/16 09:46:00 by dslogrov          #+#    #+#             */
-/*   Updated: 2019/09/16 16:34:00 by dslogrov         ###   ########.fr       */
+/*   Updated: 2019/09/18 11:55:01 by dslogrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,10 @@ int		main(int argc, char *argv[])
 			&set, NULL, NULL, &timeout);
 		if (FD_ISSET(STDIN_FILENO, &set))
 			if (get_next_line(STDIN_FILENO, &cmd_buff) > 0)
+			{
 				handle_cmd(&e, cmd_buff);
+				free(cmd_buff);
+			}
 		if (e.socket_fd > 0 && FD_ISSET(e.socket_fd, &set))
 			irc_read(&e);
 	}
